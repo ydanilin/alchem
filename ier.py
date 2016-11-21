@@ -1,6 +1,7 @@
 # coding=utf-8
 from sqlalchemy import (create_engine, MetaData, Table, Column, Integer,
-                        UniqueConstraint, select, union, or_, and_, update)
+                        UniqueConstraint, select, union, or_, and_, update,
+                        literal_column, column)
 
 
 class DBMS:
@@ -61,16 +62,14 @@ class DBMS:
 
     def moveNode(self, id_, moveTo):
         # update t_data
-        pass
-
-    def debugg(self):
-        # update t_data
         upd = update(self.t_data).where(self.t_data.c.node == 5).values(
             parent=3)
         self.connection.execute(upd)
+
         # update t_path
         subtree = select([self.t_path.c.node]).where(self.t_path.c.ancestor == 5)
         path = select([self.t_path.c.ancestor]).where(self.t_path.c.node == 5)
+
         # deletion
         cond = and_(or_(self.t_path.c.node == 5,
                         self.t_path.c.node.in_(subtree)),
@@ -78,28 +77,49 @@ class DBMS:
                     )
         delet = self.t_path.delete().where(cond)
         self.connection.execute(delet)
+
         # insertion
+        subtree = select([self.t_path.c.node]).where(self.t_path.c.ancestor == 5)
+        path = select([self.t_path.c.ancestor]).where(self.t_path.c.node == 5)
         path_y = select([self.t_path.c.ancestor]).where(self.t_path.c.node == 3)
-        subset = union(select([5, 3]),
-                       select([5, path_y]),
-                       select([subtree, 3]),
-                       select([subtree, path_y]))
-        # subset = union(select([5, 3]),
-        #                select([5, self.t_path.c.ancestor]).where(self.t_path.c.node == 3),
-        #                select([self.t_path.c.node, 3]).where(self.t_path.c.ancestor == 5),
-        #                select([subtree, path_y]))
-        res = self.connection.execute(subset)
-        for e in res:
-            print(e)
+        subset = select([column('node'), column('ancestor')]).select_from(union(select([literal_column('1').label('sortir'),
+                               literal_column('5').label('node'),
+                               literal_column('3').label('ancestor')]),
+                       select([2, 5, path_y]),
+                       select([3, subtree, 3]),
+                       select([4, subtree, path_y])).order_by('sortir')
+                                      )
         addToPath = self.t_path.insert().from_select(
             ['node', 'ancestor'], subset)
-        print(str(subset))
         self.connection.execute(addToPath)
 
-if __name__ == '__main__':
-    D = DBMS()
-    # D.addNode(9, 6)
-    # D.debugg()
+    def listAll(self):
+        output = []
+        res = self.connection.execute(select([self.t_data.c.node]))
+        nodes = [l[0] for l in res]
+        for node in nodes:
+            sql_path = select([self.t_path.c.ancestor]).where(self.t_path.c.node == node)
+            path = [i[0] for i in self.connection.execute(sql_path)]
+            output.append((node, path))
+        return output
 
-# res = [dict(r) for r in rp]
-# res = [r for r in rp]
+if __name__ == '__main__':
+
+    def printTree(tree):
+        print('{:^7} {}'.format('node', 'path'))
+        for node in tree:
+            id_ = node[0]
+            path = node[1]
+            if not path:
+                path = 'root'
+            print('{:^7} {}'.format(id_, path))
+
+    D = DBMS()
+    print('Tree at initial:')
+    printTree(D.listAll())
+    print('\nAdded node (9, 6)')
+    D.addNode(9, 6)
+    printTree(D.listAll())
+    print('\nNode (5, 2) moved with subtree to (5, 3)')
+    D.moveNode(5, 3)
+    printTree(D.listAll())
