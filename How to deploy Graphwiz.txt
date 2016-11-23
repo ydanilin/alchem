@@ -5,3 +5,5 @@ How to deploy Graphwiz.
 (from here: http://www.lfd.uci.edu/~gohlke/pythonlibs/)
 3. Add the location of layout subprograms (dot.exe, etc)
 to the system path. Example: C:\Program Files (x86)\Graphviz2.38\bin
+
+conda install -c rmg graphviz=2.38.0

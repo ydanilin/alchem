@@ -38,16 +38,16 @@ if __name__ == '__main__':
 
     G = my_graph()
     G.layout(prog='dot')
-    dim = G.graph_attr['bb'].split(',')
+    # dim = G.graph_attr['bb'].split(',')
 
     print('Graph attributes:')
     for k, v in G.graph_attr.items():
         print('{:10}: {:^10}'.format(k, v))
 
-    print('\nGraph bounding box:')
-    placeholder = '{:<20}{:^12}{:^12}'
-    print(placeholder.format('Bottom left (x, y):', dim[0], dim[1]))
-    print(placeholder.format('Top right (x, y):', dim[2], dim[3]))
+    # print('\nGraph bounding box:')
+    # placeholder = '{:<20}{:^12}{:^12}'
+    # print(placeholder.format('Bottom left (x, y):', dim[0], dim[1]))
+    # print(placeholder.format('Top right (x, y):', dim[2], dim[3]))
 
     print('\nNode geometry (coordinates from left bottom):')
     placeholder1 = '{:^8}{:^10}{:^10}{:^12}{:^12}'
@@ -80,6 +80,6 @@ if __name__ == '__main__':
             pos_repr += prefix + ' ' + x + '  ' + y + '    '
 
         print(placeholder2.format(from_to), pos_repr)
-    # G.draw("my.svg")
+    G.draw("my.png")
     print("\nCompleted")
 
