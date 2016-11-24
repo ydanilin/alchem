@@ -7,3 +7,19 @@ How to deploy Graphwiz.
 to the system path. Example: C:\Program Files (x86)\Graphviz2.38\bin
 
 conda install -c rmg graphviz=2.38.0
+
+compile pygraphviz:
+1. in pygraphviz folder, file graphviz_wrap.c:
+    line 2987:
+    #include "C:/Program Files (x86)/Graphviz2.38/include/graphviz/cgraph.h"
+
+2. in dist.py, lines 854:
+            options = self.command_options.get(command)
+            if options:
+                self._set_command_options(cmd_obj, options)
+        # hack by Yurick
+        # if command == 'build_ext':
+        #     if cmd_obj.library_dirs:
+        #         cmd_obj.library_dirs.append('C:\\Program Files (x86)\\Graphviz2.38\\lib\\debug\\lib')
+        # hack by Yurick ends
+        return cmd_obj

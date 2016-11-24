@@ -1,0 +1,57 @@
+!! always run idle from
+C:\Program Files (x86)\Miniconda2\Lib\idlelib
+!!
+
+dos cmd:
+(program runs)
+['C:\\Program Files (x86)\\Miniconda2\\Library\\bin',
+'C:\\ProgramData\\Oracle\\Java\\javapath',
+'C:\\Program Files (x86)\\Common Files\\Intel\\Shared Files\\cpp\\bin\\Intel64',
+'C:\\Windows\\system32',
+'C:\\Windows',
+'C:\\Windows\\System32\\Wbem',
+'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\',
+'C:\\Program Files(x86)\\Skype\\Phone\\',
+'C:\\Program Files (x86)\\Miniconda2',
+'C:\\Program Files (x86)\\Miniconda2\\Scripts',
+'C:\\Program Files (x86)\\Miniconda2\\Library\\bin',
+'C:\\Program Files (x86)\\PuTTY',
+'C:\\Program Files (x86)\\Graphviz2.38\\bin',
+'C:\\Program Files (x86)\\Graphviz2.38\\include']
+
+idle:
+(ImportError: No module named pygraphviz)
+['C:\\Program Files (x86)\\Miniconda2\\pkgs\\python-2.7.12-0\\Library\\bin',
+'C:\\Program Files (x86)\\Miniconda2\\pkgs\\python-2.7.12-0\\Library\\bin',
+'C:\\ProgramData\\Oracle\\Java\\javapath',
+'C:\\Program Files (x86)\\Common Files\\Intel\\Shared Files\\cpp\\bin\\Intel64',
+'C:\\Windows\\system32',
+'C:\\Windows',
+'C:\\Windows\\System32\\Wbem',
+'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\',
+'C:\\Program Files (x86)\\Skype\\Phone\\',
+'C:\\Program Files (x86)\\Miniconda2',
+'C:\\Program Files (x86)\\Miniconda2\\Scripts',
+'C:\\Program Files (x86)\\Miniconda2\\Library\\bin',
+'C:\\Program Files (x86)\\PuTTY',
+'C:\\Program Files (x86)\\Graphviz2.38\\bin',
+'C:\\Program Files (x86)\\Graphviz2.38\\include']
+
+pycharm:
+PATH
+['C:\\Program Files (x86)\\Miniconda2\\Library\\bin',
+'C:\\ProgramData\\Oracle\\Java\\javapath',
+'C:\\Program Files (x86)\\Common Files\\Intel\\Shared Files\\cpp\\bin\\Intel64',
+'C:\\Windows\\system32',
+'C:\\Windows',
+'C:\\Windows\\System32\\Wbem',
+'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\',
+'C:\\Program Files (x86)\\Skype\\Phone\\',
+'C:\\Program Files (x86)\\Miniconda2',
+'C:\\Program Files (x86)\\Miniconda2\\Scripts',
+'C:\\Program Files (x86)\\Miniconda2\\Library\\bin',
+'C:\\Program Files (x86)\\PuTTY',
+'C:\\Program Files (x86)\\Graphviz2.38\\bin',
+'C:\\Program Files (x86)\\Graphviz2.38\\include']
+PYTHONPATH
+['C:\\Users\\danilin\\Documents\\Dela\\G\\Pitonizm\\alchem', 'C:\\Program Files (x86)\\JetBrains\\PyCharm 2016.1.2\\helpers\\pydev']

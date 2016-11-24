@@ -7,15 +7,15 @@ class Translator:
         self.gdata = {}
 
     def getBoundingBox(self):
-        attrs = self.gdata['gattrs']
-        print(attrs[''])
+        bbox = self.gdata['bbox'].split(',')
+        gcoords = [float(i) for i in bbox]
+        print(gcoords)
 
     def redraw(self):
         self.gdata = self.epygraph.redraw()
-        print(self.gdata)
-        self.getBoundingBox()
 
 
 if __name__ == '__main__':
     T = Translator()
     T.redraw()
+    T.getBoundingBox()
