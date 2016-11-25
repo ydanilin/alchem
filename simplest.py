@@ -1,4 +1,7 @@
-import pygraphviz as pgv
+from distutils import msvccompiler as comp
 
-G = pgv.AGraph()
-print G.name
+print(comp.get_build_version())
+print(comp.get_build_architecture())
+
+
+
