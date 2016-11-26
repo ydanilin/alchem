@@ -23,3 +23,21 @@ compile pygraphviz:
         #         cmd_obj.library_dirs.append('C:\\Program Files (x86)\\Graphviz2.38\\lib\\debug\\lib')
         # hack by Yurick ends
         return cmd_obj
+
+
+
+http://stackoverflow.com/questions/2676763/what-version-of-visual-studio-is-python-on-my-computer-compiled-with
+
+For this version of Visual C++  Use this compiler version
+Visual C++ 4.x                  MSC_VER=1000
+Visual C++ 5                    MSC_VER=1100
+Visual C++ 6                    MSC_VER=1200
+Visual C++ .NET                 MSC_VER=1300
+Visual C++ .NET 2003            MSC_VER=1310
+Visual C++ 2005  (8.0)          MSC_VER=1400
+Visual C++ 2008  (9.0)          MSC_VER=1500
+Visual C++ 2010 (10.0)          MSC_VER=1600
+Visual C++ 2012 (11.0)          MSC_VER=1700
+Visual C++ 2013 (12.0)          MSC_VER=1800
+Visual C++ 2015 (14.0)          MSC_VER=1900
+
