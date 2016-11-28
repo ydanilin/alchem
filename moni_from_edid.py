@@ -11,7 +11,7 @@ from ctypes.wintypes import LONG
 from ctypes.wintypes import HKEY
 from ctypes.wintypes import BYTE
 
-from edid_parser import parse
+from edid_parser1 import parse
 
 
 # some details of the windows API differ between 32 and 64 bit systems..
