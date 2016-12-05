@@ -16,6 +16,7 @@ class Translator:
 
 
 if __name__ == '__main__':
+    huj = raw_input('Press letter and enter to continue')
     T = Translator()
     T.redraw()
     T.getBoundingBox()
