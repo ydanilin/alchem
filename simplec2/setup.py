@@ -9,8 +9,11 @@ setup(
                            define_macros=[('GVDLL', None)],
 # http://stackoverflow.com/questions/2885750/difficulties-getting-graphviz-working-as-a-library-in-c
                            include_dirs=['C://Program Files (x86)//Graphviz2.38//include'],
-                           library_dirs=['C://Program Files (x86)//Graphviz2.38//lib//release//lib'],
-                           libraries=["cdt", "cgraph"],
+                           library_dirs=['C://Program Files (x86)//Graphviz2.38//lib//release//lib'
+                                         #'C://Program Files (x86)//Graphviz2.38//bin',
+                                         #'C://Program Files (x86)//Graphviz2.38//lib//release//dll'
+                                         ],
+                           libraries=["cdt", "cgraph", "gvc"],
                            )
                  ]
 

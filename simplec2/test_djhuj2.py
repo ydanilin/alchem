@@ -7,3 +7,5 @@ import djhuj2
 
 t = djhuj2.puk(100)
 print(t)
+
+djhuj2.bduk()

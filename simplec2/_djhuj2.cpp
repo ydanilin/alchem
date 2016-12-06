@@ -17,6 +17,14 @@ static PyObject *wrap_puk(PyObject *self, PyObject *args) {
     PyObject *ret = Py_BuildValue("i", output);
     return ret;
 }
+
+static PyObject *wrap_bduk(PyObject *self, PyObject *args) {
+    bduk();
+    Py_RETURN_NONE;
+//    Py_INCREF(Py_None);
+//    return Py_None;
+}
+
 /* A list of all the methods defined by this module. */
 /* "puk" is the name seen inside of Python */
 /* "djhuj_puk" is the name of the C WRAPPER function handling the Python call */
@@ -24,6 +32,7 @@ static PyObject *wrap_puk(PyObject *self, PyObject *args) {
 /* The {NULL, NULL} entry indicates the end of the method definitions */
 static PyMethodDef module_methods[] = {
     {"puk", wrap_puk, METH_VARARGS, puk_docstring},
+    {"bduk", wrap_bduk, METH_NOARGS, puk_docstring},
     {NULL, NULL, 0, NULL}
 };
 
