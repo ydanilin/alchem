@@ -1,3 +1,4 @@
 
 int puk(int);
-void bduk();
+void* bduk();
+void attribut(void*);

@@ -19,10 +19,20 @@ static PyObject *wrap_puk(PyObject *self, PyObject *args) {
 }
 
 static PyObject *wrap_bduk(PyObject *self, PyObject *args) {
-    bduk();
+    void* pointer;
+    pointer = bduk();
+    Py_INCREF(pointer);
+    PyObject *ret = Py_BuildValue("O", pointer);
+    return ret;
+//    Py_RETURN_NONE;
+}
+
+static PyObject *wrap_attribut(PyObject *self, PyObject *args) {
+    void* gptr;
+    if (!PyArg_ParseTuple(args, "O", gptr))
+        return NULL;
+    attribut(gptr);
     Py_RETURN_NONE;
-//    Py_INCREF(Py_None);
-//    return Py_None;
 }
 
 /* A list of all the methods defined by this module. */
@@ -33,6 +43,7 @@ static PyObject *wrap_bduk(PyObject *self, PyObject *args) {
 static PyMethodDef module_methods[] = {
     {"puk", wrap_puk, METH_VARARGS, puk_docstring},
     {"bduk", wrap_bduk, METH_NOARGS, puk_docstring},
+    {"attribut", wrap_attribut, METH_VARARGS, puk_docstring},
     {NULL, NULL, 0, NULL}
 };
 

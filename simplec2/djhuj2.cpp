@@ -9,13 +9,15 @@ int puk(int i) {
     return i + 36;
 }
 
-void bduk() {
+
+
+void* bduk() {
     GVC_t *gvc;
     Agraph_t *ag;
     Agnode_t *node1;
     Agnode_t *node2;
     Agedge_t *edge;
-    char * neim;
+//    char * neim;
     #ifndef WITH_CGRAPH
         aginit();
     #else
@@ -38,10 +40,12 @@ void bduk() {
 
     gvLayout(gvc, ag, "dot");
 
-    neim = agget(ag, "bb");
-    std::cout << typeid(*neim).name() << std::endl;
-    std::cout << sizeof(*neim) << std::endl;
-    printf("%s\n", neim);
+//    neim = agget(ag, "bb");
+//    attribut(ag);
+
+//    std::cout << typeid(*neim).name() << std::endl;
+//    std::cout << sizeof(*neim) << std::endl;
+//    printf("%s\n", neim);
 
     agwrite(ag, stdout);
 
@@ -50,7 +54,17 @@ void bduk() {
     cnt = 0; attr = 0;
     while (attr = agnxtattr(ag, AGNODE, attr)) cnt++;
         printf("The graph %s has %d attributes\n",agnameof(ag),cnt);
+    return ag;
 
-    agclose(ag);
-    printf("Agraph closed");
+//    agclose(ag);
+//    printf("Agraph closed");
+}
+
+void attribut(void* gra) {
+    Agraph_t* ag;
+    char* neim;
+    ag = (Agraph_t*)gra;
+    neim = agget(ag, "bb");
+    printf("Output from attribut(): %s\n", neim);
+    agwrite(ag, stdout);
 }
