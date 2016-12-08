@@ -21,16 +21,16 @@ static PyObject *wrap_puk(PyObject *self, PyObject *args) {
 static PyObject *wrap_bduk(PyObject *self, PyObject *args) {
     void* pointer;
     pointer = bduk();
-    Py_INCREF(pointer);
-    PyObject *ret = Py_BuildValue("O", pointer);
-    return ret;
+    return PyCapsule_New(pointer, "Graph", NULL);
 //    Py_RETURN_NONE;
 }
 
 static PyObject *wrap_attribut(PyObject *self, PyObject *args) {
+    PyObject* py_ptr;
     void* gptr;
-    if (!PyArg_ParseTuple(args, "O", gptr))
+    if (!PyArg_ParseTuple(args, "O", &py_ptr))
         return NULL;
+    gptr = (void *)PyCapsule_GetPointer(py_ptr, "Graph");
     attribut(gptr);
     Py_RETURN_NONE;
 }

@@ -14,7 +14,7 @@ print(t)
 ghandle = djhuj2.bduk()
 
 # djhuj2.attribut(ghandle)
-djhuj2.attribut(100)
+djhuj2.attribut(ghandle)
 # if ghandle:
 #     print('HUJ')
     # print(type(ghandle))
