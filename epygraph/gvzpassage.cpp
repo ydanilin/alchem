@@ -6,7 +6,7 @@
 
 /* Extension procedure is slightly different for Py2 and Py3 so uncomment
    the following #define for Py3 */
-//#define PY3
+#define PY3
 
 #define MODULE_NAME "gvzpassage"
 #define MODULEINIT_PY3(NAME) PyInit_ ## NAME(void)
@@ -16,23 +16,22 @@
 
 static PyObject *wrap_agraphnew(PyObject *self, PyObject *args, PyObject *kwargs) {
     char* name;
-    static char* kwlist[] = {"directed", NULL};
-    int directed;
-    char* gtype;
+    static char* kwlist[] = {"name", "directed", NULL};
+    int directed = 0;
+    Agdesc_t gtype;
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|b", kwlist, &name, &directed))
         return NULL;
     if (directed) {
         gtype = Agstrictdirected;}
     else {
         gtype = Agstrictundirected;}
-    printf("The graph named %s has directed value of %d\n", name, directed)
+    printf("The graph named %s has directed value of %d\n", name, directed);
     Py_RETURN_NONE;
 }
-
-
+//(PyCFunction)
 /* Methods registration */
 static PyMethodDef module_methods[] = {
-    {"agraphNew", wrap_agraphnew, METH_VARARGS | METH_KEYWORDS, "Creates new Agraph"},
+    {"agraphNew", (PyCFunction)wrap_agraphnew, METH_VARARGS | METH_KEYWORDS, "Creates new Agraph"},
     {NULL, NULL, 0, NULL}
 };
 
@@ -41,7 +40,7 @@ static PyMethodDef module_methods[] = {
     static struct PyModuleDef thismodule = {
        PyModuleDef_HEAD_INIT,
        MODULE_NAME,          /* name of module */
-       module_docstring, /* module documentation, may be NULL */
+       NULL, /* module documentation, may be NULL */
        -1,               /* size of per-interpreter state of the module, */
                       /* or -1 if the module keeps state in global variables. */
        module_methods
@@ -56,8 +55,7 @@ static PyMethodDef module_methods[] = {
 PyMODINIT_FUNC
 #ifdef PY3
     /* For Python 3*/
-    // PyInit_gvzpassage(void)
-    MODULEINIT_PY3(MODULE_NAME)
+     PyInit_gvzpassage(void)
 #else
     /* For Python 2 */
     // initpointsample(void)

@@ -1,7 +1,7 @@
 #include <Python.h>
 #include "djhuj2.h"
 
-//#define PY3
+#define PY3
 
 static char module_docstring[] =
     "This module provides the famous djhuj function";
