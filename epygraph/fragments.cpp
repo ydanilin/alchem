@@ -43,3 +43,25 @@
     std::cout << Agstrictundirected.directed << std::endl;
 
     printf("Retrieved Agraph has name %s, directed=%d, strict=%d, undir=%d\n", agnameof(ag), agisdirected(ag), agisstrict(ag), agisundirected(ag));
+
+    printf("Amount of Splines: %d\n", splines->size);
+    bezier* list = splines->list;
+    bezier spline = list[0];
+    printf("Spline index 0 details:\n");
+    printf("Sflag: %d\n", spline.sflag);
+    printf("Eflag: %d\n", spline.eflag);
+    printf("Has %d points\n", spline.size);
+    pointf tochka1 = spline.list[0];
+    pointf arrowtip1 = spline.sp;
+    pointf tochka2 = spline.list[spline.size-1];
+    pointf arrowtip2 = spline.ep;
+    printf("Start point edge(x,y): (%f, %f)\n", tochka1.x, tochka1.y);
+    printf("Start point arrowtip(x,y): (%f, %f)\n", arrowtip1.x, arrowtip1.y);
+    printf("End point edge(x,y): (%f, %f)\n", tochka2.x, tochka2.y);
+    printf("End point arrowtip(x,y): (%f, %f)\n", arrowtip2.x, arrowtip2.y);
+//    PyObject* dict = PyDict_New();
+
+    PyObject* output = PyList_New(1);
+    PyList_SET_ITEM(output, 0, Py_BuildValue("{sdsd}", "arrowtipX", arrowtip2.x,
+                                                       "arrowtipY", arrowtip2.y));
+//    Py_RETURN_NONE;

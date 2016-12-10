@@ -14,3 +14,4 @@ eg = gvzpassage.edge_geometry(edge2)
 
 print(dic)
 print(ng)
+print(eg)

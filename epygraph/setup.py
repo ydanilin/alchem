@@ -1,5 +1,6 @@
 from distutils.core import setup, Extension
-
+# C:\Miniconda2\Lib\distutils\msvc9compiler.py
+# C:\Users\Yuretzz\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0\vcvarsall.bat
 # build_ext --inplace
 
 setup(

@@ -8,7 +8,8 @@
 
 /* Extension procedure is slightly different for Py2 and Py3 so uncomment
    the following #define for Py3 */
-#define PY3
+
+//#define PY3
 
 #define MODULE_NAME "gvzpassage"
 #define MODULEINIT_PY3(NAME) PyInit_ ## NAME(void)
@@ -128,31 +129,51 @@ static PyObject *node_geometry(PyObject *self, PyObject *args) {
 }
 
 static PyObject *edge_geometry(PyObject *self, PyObject *args) {
-    PyObject* edge_ptr;
-    Agedge_t* edge;
+    PyObject* edge_ptr;  // to get incoming PyCapsule
+    Agedge_t* edge;      // to retrieve Edge
+    int i, j;            // iterate: i = splines; j = points of a spline
+    splines* splines;    // collection of all splines of the edge
+    PyObject* output;    // to return
+    bezier spline;       // for each spline in splines
+    PyObject* points;    // all points of a given spline
+    pointf tochka;       // a point in points
+    PyObject* sppoint;   // same, but in Py dictionary form
+    pointf sarrowtip, earrowtip;  // start arrow tip and end arrow tip (see man)
+    PyObject *sartpoint, *eartpoint;  // same, but in Py dictionary form
+    PyObject* elem;      // ready-to-go spline structure
+    /* argument (edge) gathering */
     if (!PyArg_ParseTuple(args, "O", &edge_ptr)) {
         return NULL;
     }
     if (!(edge = retrieve_edge(edge_ptr))) {
         return NULL;
     }
-    splines* splines = ED_spl(edge);
-    printf("Amount of Splines: %d\n", splines->size);
-    bezier* list = splines->list;
-    bezier spline = list[0];
-    printf("Spline index 0 details:\n");
-    printf("Sflag: %d\n", spline.sflag);
-    printf("Eflag: %d\n", spline.eflag);
-    printf("Has %d points\n", spline.size);
-    pointf tochka1 = spline.list[0];
-    pointf arrowtip1 = spline.sp;
-    pointf tochka2 = spline.list[spline.size-1];
-    pointf arrowtip2 = spline.ep;
-    printf("Start point edge(x,y): (%f, %f)\n", tochka1.x, tochka1.y);
-    printf("Start point arrowtip(x,y): (%f, %f)\n", arrowtip1.x, arrowtip1.y);
-    printf("End point edge(x,y): (%f, %f)\n", tochka2.x, tochka2.y);
-    printf("End point arrowtip(x,y): (%f, %f)\n", arrowtip2.x, arrowtip2.y);
-    Py_RETURN_NONE;
+    /* geometry parsing */
+    splines = ED_spl(edge);
+    output = PyList_New(splines->size);
+    for(i = 0; i < splines->size; i++) {
+        spline = splines->list[i];
+        points = PyList_New(spline.size);
+        for(j = 0; j < spline.size; j++) {
+            tochka = spline.list[j];
+            sppoint = Py_BuildValue("{sdsd}", "x", tochka.x,
+                                              "y", tochka.y);
+            PyList_SET_ITEM(points, j, sppoint);
+        }
+        sarrowtip = spline.sp;
+        sartpoint = Py_BuildValue("{sdsd}", "x", sarrowtip.x,
+                                            "y", sarrowtip.y);
+        earrowtip = spline.ep;
+        eartpoint = Py_BuildValue("{sdsd}", "x", earrowtip.x,
+                                            "y", earrowtip.y);
+        elem = Py_BuildValue("{sOsisisOsO}", "points", points,
+                                             "sflag", spline.sflag,
+                                             "eflag", spline.eflag,
+                                             "sarrowtip", sartpoint,
+                                             "earrowtip", eartpoint);
+        PyList_SET_ITEM(output, i, elem);
+    }
+    return output;
 }
 
 /* Methods registration */
