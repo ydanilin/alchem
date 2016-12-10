@@ -8,7 +8,7 @@
 
 /* Extension procedure is slightly different for Py2 and Py3 so uncomment
    the following #define for Py3 */
-//#define PY3
+#define PY3
 
 #define MODULE_NAME "gvzpassage"
 #define MODULEINIT_PY3(NAME) PyInit_ ## NAME(void)
@@ -23,6 +23,10 @@ static Agnode_t *retrieve_node(PyObject *obj) {
     return (Agnode_t *) PyCapsule_GetPointer(obj, "Agnode");
 }
 
+static Agedge_t *retrieve_edge(PyObject *obj) {
+    return (Agedge_t *) PyCapsule_GetPointer(obj, "Agedge");
+}
+
 /* core procedures here */
 static PyObject *wrap_agraphnew(PyObject *self, PyObject *args, PyObject *kwargs) {
     Agraph_t *ag;
@@ -33,7 +37,7 @@ static PyObject *wrap_agraphnew(PyObject *self, PyObject *args, PyObject *kwargs
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|b", kwlist, &name, &directed))
         return NULL;
     gtype = Agstrictdirected;
-    /* Sitty bug: all Agdesc_t variables are THE SAME...
+    /* Shitty bug: all Agdesc_t variables are THE SAME...
        therefore will set individual bits manually */
     if (directed == 1) {
         gtype.directed = 1;}
@@ -90,10 +94,65 @@ static PyObject *wrap_layout(PyObject *self, PyObject *args) {
         return NULL;
     gvc = gvContext();
     gvLayout(gvc, ag, "dot");
-    agwrite(ag, stdout);
-    char* bbox = agget(ag, "bb");
-    printf("%f", GD_bb(ag).UR.x);
-    return Py_BuildValue("{ss}", "bbox", bbox);
+    boxf bbox = GD_bb(ag);
+    double LLx = bbox.LL.x;
+    double LLy = bbox.LL.y;
+    double URx = bbox.UR.x;
+    double URy = bbox.UR.y;
+    return Py_BuildValue("{sdsdsdsd}", "LLx", LLx,
+                                       "LLy", LLy,
+                                       "URx", URx,
+                                       "URy", URy);
+}
+
+static PyObject *node_geometry(PyObject *self, PyObject *args) {
+    PyObject* node_ptr;
+    Agnode_t* node;
+    if (!PyArg_ParseTuple(args, "O", &node_ptr)) {
+        return NULL;
+    }
+    if (!(node = retrieve_node(node_ptr))) {
+        return NULL;
+    }
+    pointf center = ND_coord(node);
+    double x = center.x;
+    double y = center.y;
+    double width = ND_width(node);
+    double height = ND_height(node);
+    char* shape = ND_shape(node)->name;
+    return Py_BuildValue("{sdsdsdsdss}", "centerX", x,
+                                       "centerY", y,
+                                       "width", width,
+                                       "height", height,
+                                       "shape", shape);
+}
+
+static PyObject *edge_geometry(PyObject *self, PyObject *args) {
+    PyObject* edge_ptr;
+    Agedge_t* edge;
+    if (!PyArg_ParseTuple(args, "O", &edge_ptr)) {
+        return NULL;
+    }
+    if (!(edge = retrieve_edge(edge_ptr))) {
+        return NULL;
+    }
+    splines* splines = ED_spl(edge);
+    printf("Amount of Splines: %d\n", splines->size);
+    bezier* list = splines->list;
+    bezier spline = list[0];
+    printf("Spline index 0 details:\n");
+    printf("Sflag: %d\n", spline.sflag);
+    printf("Eflag: %d\n", spline.eflag);
+    printf("Has %d points\n", spline.size);
+    pointf tochka1 = spline.list[0];
+    pointf arrowtip1 = spline.sp;
+    pointf tochka2 = spline.list[spline.size-1];
+    pointf arrowtip2 = spline.ep;
+    printf("Start point edge(x,y): (%f, %f)\n", tochka1.x, tochka1.y);
+    printf("Start point arrowtip(x,y): (%f, %f)\n", arrowtip1.x, arrowtip1.y);
+    printf("End point edge(x,y): (%f, %f)\n", tochka2.x, tochka2.y);
+    printf("End point arrowtip(x,y): (%f, %f)\n", arrowtip2.x, arrowtip2.y);
+    Py_RETURN_NONE;
 }
 
 /* Methods registration */
@@ -102,6 +161,8 @@ static PyMethodDef module_methods[] = {
     {"addNode", wrap_addNode, METH_VARARGS, "Add a new node"},
     {"addEdge", (PyCFunction)wrap_addEdge, METH_VARARGS | METH_KEYWORDS, "Add a new edge"},
     {"layout", wrap_layout, METH_VARARGS, "Create layout"},
+    {"node_geometry", node_geometry, METH_VARARGS, "Gets node geometry after layout"},
+    {"edge_geometry", edge_geometry, METH_VARARGS, "Gets edge geometry after layout"},
     {NULL, NULL, 0, NULL}
 };
 
