@@ -11,7 +11,7 @@ from ctypes.wintypes import LONG
 from ctypes.wintypes import HKEY
 from ctypes.wintypes import BYTE
 
-from edid_parser import parse
+from edid_parser import EdidParser
 
 
 class MoniFromEdid:
@@ -38,6 +38,7 @@ class MoniFromEdid:
     """
 
     def __init__(self):
+        self.parser = EdidParser()
         # name aliases to respect winapi-style syntax
         self.NULL = 0
         self.HDEVINFO = ctypes.c_void_p
@@ -133,7 +134,7 @@ class MoniFromEdid:
 
         for Step 1, the first argument is PCTSTR that should NOT be UNICODE.
         So, for Py3 compatibility, where all strings are Unicode we need to
-        pass bytes object. bytes are specially designed to pass strict Ascii
+        pass bytes object. bytes are specially designed to pass plain Ascii
         strings to other systems
         """
         # step 1 - get class GUID
@@ -174,9 +175,10 @@ class MoniFromEdid:
         self.SetupDiDestroyDeviceInfoList(g_hdi)
 
         # complicated process finished )))
-        return parse(bytearray(edidTuple[1]))
+        output = self.parser.parse(bytearray(edidTuple[1]))
+        return {'millimetersX': output[0], 'millimetersY': output[1],
+                'pixelX': output[2], 'pixelY': output[3]}
 
-# TODO castrate edid_parser1
 
 if __name__ == '__main__':
     edid = MoniFromEdid()

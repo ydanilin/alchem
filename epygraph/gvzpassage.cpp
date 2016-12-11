@@ -1,5 +1,6 @@
 #include <stdio.h>     // for printf
 #include <iostream>    // cout
+#include <fcntl.h>
 #include <Python.h>
 /* Make sure the path to Graghviz include library is on your system path
    "C:/Program Files (x86)/Graphviz2.38/include" */
@@ -9,7 +10,7 @@
 /* Extension procedure is slightly different for Py2 and Py3 so uncomment
    the following #define for Py3 */
 
-//#define PY3
+#define PY3
 
 #define MODULE_NAME "gvzpassage"
 #define MODULEINIT_PY3(NAME) PyInit_ ## NAME(void)
@@ -176,6 +177,55 @@ static PyObject *edge_geometry(PyObject *self, PyObject *args) {
     return output;
 }
 
+static PyObject *delete_node(PyObject *self, PyObject *args) {
+    /* Warning! Delete edges first! */
+    PyObject* gra_ptr;
+    PyObject* node_ptr;
+    Agraph_t* ag;
+    Agnode_t* node;
+    int result;
+    if (!PyArg_ParseTuple(args, "OO", &gra_ptr, &node_ptr)) {
+        return NULL;
+    }
+    if (!(ag = retrieve_graph(gra_ptr)))
+        return NULL;
+    if (!(node = retrieve_node(node_ptr))) {
+        return NULL;
+    }
+    result = agdelete(ag, node);
+    return Py_BuildValue("i", result);
+}
+
+static PyObject *delete_edge(PyObject *self, PyObject *args) {
+    PyObject* gra_ptr;
+    PyObject* edge_ptr;
+    Agraph_t* ag;
+    Agedge_t* edge;
+    int result;
+    if (!PyArg_ParseTuple(args, "OO", &gra_ptr, &edge_ptr)) {
+        return NULL;
+    }
+    if (!(ag = retrieve_graph(gra_ptr)))
+        return NULL;
+    if (!(edge = retrieve_edge(edge_ptr))) {
+        return NULL;
+    }
+    result = agdelete(ag, edge);
+    return Py_BuildValue("i", result);
+}
+
+static PyObject *stdout_graph(PyObject *self, PyObject *args) {
+    PyObject* gra_ptr;
+    Agraph_t* ag;
+    if (!PyArg_ParseTuple(args, "O", &gra_ptr)) {
+        return NULL;
+    }
+    if (!(ag = retrieve_graph(gra_ptr)))
+        return NULL;
+    agwrite(ag, stdout);
+    Py_RETURN_NONE;
+}
+
 /* Methods registration */
 static PyMethodDef module_methods[] = {
     {"agraphNew", (PyCFunction)wrap_agraphnew, METH_VARARGS | METH_KEYWORDS, "Creates new Agraph"},
@@ -184,6 +234,9 @@ static PyMethodDef module_methods[] = {
     {"layout", wrap_layout, METH_VARARGS, "Create layout"},
     {"node_geometry", node_geometry, METH_VARARGS, "Gets node geometry after layout"},
     {"edge_geometry", edge_geometry, METH_VARARGS, "Gets edge geometry after layout"},
+    {"delete_node", delete_node, METH_VARARGS, "Delete node. Warning! Delete edges first"},
+    {"delete_edge", delete_edge, METH_VARARGS, "Delete edge"},
+    {"stdout_graph", stdout_graph, METH_VARARGS, "Writes graph text to stdout"},
     {NULL, NULL, 0, NULL}
 };
 
