@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import (QDialog, QMainWindow, QTextEdit, QApplication,
                              QGroupBox, QHBoxLayout, QGridLayout, QPushButton,
                              QLabel, QLineEdit, QFormLayout, QComboBox,
                              QSpinBox)
-from PySide.QtCore import SIGNAL, SLOT
 
 
 class Dialog(QDialog):
@@ -53,12 +52,25 @@ class Dialog(QDialog):
     def createGridGroupBox(self):
         gridGroupBox = QGroupBox(self.tr("Grid layout"))
         layout = QGridLayout()
-        for i in range(self.NumGridRows):
-            label = QLabel(self.tr("Line " + str(i + 1)))
-            lineEdit = QLineEdit()
-            layout.addWidget(label, i + 1, 0)
-            layout.addWidget(lineEdit, i + 1, 1)
+        label1 = QLabel(self.tr("Line 1"))
+        label2 = QLabel(self.tr("Line 2"))
+        label3 = QLabel(self.tr("Line 3"))
+        lineEdit1 = QLineEdit()
+        lineEdit2 = QLineEdit()
+        lineEdit3 = QLineEdit()
+        layout.addWidget(label1, 0, 0)
+        layout.addWidget(lineEdit1, 0, 1)
+        layout.addWidget(label2, 2, 0)
+        layout.addWidget(lineEdit2, 2, 1)
+        layout.addWidget(label3, 3, 0)
+        layout.addWidget(lineEdit3, 3, 1)
+        # for i in range(self.NumGridRows):
+        #     label = QLabel(self.tr("Line " + str(i + 1)))
+        #     lineEdit = QLineEdit()
+        #     layout.addWidget(label, i + 1, 0)
+        #     layout.addWidget(lineEdit, i + 1, 1)
         smallEditor = QTextEdit()
+        puk = smallEditor.sizeHint()
         smallEditor.setPlainText(self.tr("This widget takes up about two "
                                          "thirds of the grid layout."))
         layout.addWidget(smallEditor, 0, 2, 4, 1)

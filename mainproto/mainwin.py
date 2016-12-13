@@ -24,9 +24,9 @@ class MoyStil(QProxyStyle):
         if metric == 46:  # HeaderMargin surrounding text in TableWidget header
             size = 5      # this value affects TableWidget column height if column height is small
         if metric == 92:  # default TableWidget column width
-            size = 500
+            size = 80
         if metric == 93:  # default TableWidget column height
-            size = 50
+            size = 20
         if not(metric in self.calledIDs) and widget:
             # print('pixel metric No {0} = {1}, called by {2}. Option: {3}').format(
             #     metric, size, widget, option)
@@ -174,19 +174,19 @@ class MainWindow(QMainWindow):
             if l > length:
                 length = l
                 strin = self.tr(param[1])
-        print 'MaxWidth: {0}, for string: {1}'.format(length, strin)
+        print('MaxWidth: {0}, for string: {1}'.format(length, strin))
         self.tw.setColumnWidth(1, length)
 
 
         appFont = self.app.font()
         cellFont = self.tw.item(1,1).font()
         tableFont = self.tw.font()
-        print appFont
-        print cellFont
-        print tableFont
-        print fm
-        #print 'TitleBarHeight: {0}'.format(app.upperTape)
-        #print 'MdiSubWindowFrameWidth: {0}'.format(app.edge)
+        print(appFont)
+        print(cellFont)
+        print(tableFont)
+        print(fm)
+        #print('TitleBarHeight: {0}'.format(app.upperTape))
+        #print('MdiSubWindowFrameWidth: {0}'.format(app.edge))
 
 app = MyApp(sys.argv)
 win = MainWindow()
