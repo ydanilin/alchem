@@ -5,9 +5,9 @@ from __future__ import division
 def my_graph():
     G = pgv.AGraph(name='miles_dat', directed=True)
     # G.graph_attr['ratio'] = 'fill' # fits both sides of scene rectangle
-    G.graph_attr['ratio'] = 'expand' # fits largest side
-    G.graph_attr['size'] = '4,4!' # in inches
-    G.node_attr['shape']='circle'
+    # G.graph_attr['ratio'] = 'expand' # fits largest side
+    # G.graph_attr['size'] = '4,4!' # in inches
+    # G.node_attr['shape']='circle'
     # G.node_attr['fixedsize']='true'
     # G.node_attr['fontsize']='8'
     # G.node_attr['style']='filled'
@@ -21,11 +21,11 @@ def my_graph():
     G.add_node(2)
     G.add_node(3)
     G.add_node(4)
-    G.add_node(5)
+    # G.add_node(5)
     G.add_edge(1, 2)
-    G.add_edge(2, 3)
+    G.add_edge(1, 3)
     G.add_edge(3, 4)
-    G.add_edge(2, 5)
+    # G.add_edge(2, 5)
     
     return G
 

@@ -46,6 +46,11 @@ static PyObject *wrap_agraphnew(PyObject *self, PyObject *args, PyObject *kwargs
     else {
         gtype.directed = 0;}
     ag = agopen(name, gtype, 0);
+    // hack
+//    layout_t* drw = GD_drawing(ag);
+//    double dpi = drw->dpi;
+//    printf("During creation dpi is %f\n", dpi);
+    // hack ends
     return PyCapsule_New(ag, "Agraph", NULL);
 }
 
@@ -101,6 +106,11 @@ static PyObject *wrap_layout(PyObject *self, PyObject *args) {
     double LLy = bbox.LL.y;
     double URx = bbox.UR.x;
     double URy = bbox.UR.y;
+    // hack
+//    layout_t* drw = GD_drawing(ag);
+//    double dpi = drw->dpi;
+//    printf("DPI is %f\n", dpi);
+    // hack ends
     return Py_BuildValue("{sdsdsdsd}", "LLx", LLx,
                                        "LLy", LLy,
                                        "URx", URx,

@@ -2,26 +2,29 @@
 import gvzpassage
 
 
-handle = gvzpassage.agraphNew('DjHuj', directed=True)
-node1 = gvzpassage.addNode(handle, "HUJ_1")
-node2 = gvzpassage.addNode(handle, "HUJ_2")
-node3 = gvzpassage.addNode(handle, "HUJ_3")
-node4 = gvzpassage.addNode(handle, "HUJ_4")
-edge1 = gvzpassage.addEdge(handle, node1, node2, "rebro12")
-edge2 = gvzpassage.addEdge(handle, node1, node3)
-edge3 = gvzpassage.addEdge(handle, node3, node4)
-dic = gvzpassage.layout(handle)
-print('Graph before delete node HUJ_4:')
-gvzpassage.stdout_graph(handle)
-# print('')
-gvzpassage.delete_edge(handle, edge3)
-gvzpassage.delete_node(handle, node4)
-print('Graph AFTER delete node HUJ_4:')
-gvzpassage.stdout_graph(handle)
+class AGraph:
+    def __init__(self, directed=True):
+        self.graphPtr = gvzpassage.agraphNew('DjHuj', directed)
+        self.nodesPtr = []
+        self.nodesPtr.append(gvzpassage.addNode(self.graphPtr, "1"))
+        self.nodesPtr.append(gvzpassage.addNode(self.graphPtr, "2"))
+        self.nodesPtr.append(gvzpassage.addNode(self.graphPtr, "3"))
+        self.nodesPtr.append(gvzpassage.addNode(self.graphPtr, "4"))
+        self.edge1Ptr = gvzpassage.addEdge(self.graphPtr, self.nodesPtr[0], self.nodesPtr[1])
+        self.edge2Ptr = gvzpassage.addEdge(self.graphPtr, self.nodesPtr[0], self.nodesPtr[2])
+        self.edge3Ptr = gvzpassage.addEdge(self.graphPtr, self.nodesPtr[2], self.nodesPtr[3])
+        self.boundingBox = gvzpassage.layout(self.graphPtr)
+        # print('Graph before delete node HUJ_4:')
+        # gvzpassage.stdout_graph(self.graphPtr)
+        # gvzpassage.delete_edge(self.graphPtr, edge3)
+        # gvzpassage.delete_node(self.graphPtr, node4)
+        # print('Graph AFTER delete node HUJ_4:')
+        # gvzpassage.stdout_graph(self.graphPtr)
 
-ng = gvzpassage.node_geometry(node3)
-eg = gvzpassage.edge_geometry(edge2)
+        self.nodesGeom = []
+        for nodePtr in self.nodesPtr:
+            self.nodesGeom.append(gvzpassage.node_geometry(nodePtr))
+        # eg = gvzpassage.edge_geometry(edge2)
 
-# print(dic)
-# print(ng)
-print(eg)
+if __name__ == '__main__':
+    a = AGraph()

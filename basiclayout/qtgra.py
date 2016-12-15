@@ -1,7 +1,10 @@
 import sys
 import json
-from PyQt5.QtWidgets import QApplication, QMainWindow, QProxyStyle, QFrame, QWidget, QHBoxLayout
-from PyQt5.QtCore import QSize
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QProxyStyle, QFrame,
+                             QWidget, QHBoxLayout)
+from PyQt5.QtCore import QSize, QRect, Qt
+from PyQt5.QtGui import QPainter
+
 
 class MoyStil(QProxyStyle):
     def __init__(self):
@@ -80,6 +83,28 @@ class hujFrame(QFrame):  # QWidget
 
     def paintEvent(self, event):
         print('hujFrame PaintEvent()', event.rect())
+        painter = QPainter()
+        rect = painter.viewport()
+        print('hujFrame painter.viewport()', event.rect())
+        painter.begin(self)
+        painter.save()
+        font = painter.font()
+        font.setPixelSize(56)
+        painter.setFont(font)
+        # painter.translate(100, 100)
+        rectangle = QRect(160, 160, 100, 50)
+        boundingRect = painter.drawText(rectangle, 0, self.tr("Hello"))
+        pen = painter.pen()
+        pen.setStyle(Qt.DotLine)
+        painter.setPen(pen)
+        painter.drawRect(
+            boundingRect.adjusted(0, 0, -pen.width(), -pen.width()))
+        pen.setStyle(Qt.DashLine)
+        painter.setPen(pen)
+        painter.drawRect(rectangle.adjusted(0, 0, -pen.width(), -pen.width()))
+        painter.restore()
+        painter.end()
+        del painter
         super(hujFrame, self).paintEvent(event)
 
     def sizeHint(self):
