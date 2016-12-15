@@ -10,7 +10,7 @@
 /* Extension procedure is slightly different for Py2 and Py3 so uncomment
    the following #define for Py3 */
 
-//#define PY3
+#define PY3
 
 #define MODULE_NAME "gvzpassage"
 #define MODULEINIT_PY3(NAME) PyInit_ ## NAME(void)

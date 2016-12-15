@@ -54,7 +54,8 @@ class hujFrame(QFrame):  # QWidget
         print(painter.device().physicalDpiY())
         print(painter.device().logicalDpiX())
         print(painter.device().logicalDpiY())
-        scaleDpi = 96.0/72.0
+        # was 96.0/72.0
+        scaleDpi = 101.0/72.0  # (true res for 344x193 mm, 1366x768) / 72
         painter.drawRect(self.graph.boundingBox['LLx']*scaleDpi, self.graph.boundingBox['LLy']*scaleDpi,
                          self.graph.boundingBox['URx']*scaleDpi, self.graph.boundingBox['URy']*scaleDpi)
 
