@@ -5,6 +5,7 @@ import epygraph.gvzpassage as gps
 class AGraph:
     def __init__(self, directed=True):
         self.graphPtr = gps.agraphNew('DjHuj', directed)
+        gps.set_shape_nodes(self.graphPtr, 'circle')
         self.nodesPtr = []
         self.nodesPtr.append(gps.addNode(self.graphPtr, "1"))
         self.nodesPtr.append(gps.addNode(self.graphPtr, "2"))
@@ -28,3 +29,4 @@ class AGraph:
 
 if __name__ == '__main__':
     a = AGraph()
+    print(a.nodesGeom)

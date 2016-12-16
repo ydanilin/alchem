@@ -7,7 +7,7 @@ def my_graph():
     # G.graph_attr['ratio'] = 'fill' # fits both sides of scene rectangle
     # G.graph_attr['ratio'] = 'expand' # fits largest side
     # G.graph_attr['size'] = '4,4!' # in inches
-    # G.node_attr['shape']='circle'
+    G.node_attr['shape']='circle'
     # G.node_attr['fixedsize']='true'
     # G.node_attr['fontsize']='8'
     # G.node_attr['style']='filled'

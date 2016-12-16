@@ -10,7 +10,7 @@
 /* Extension procedure is slightly different for Py2 and Py3 so uncomment
    the following #define for Py3 */
 
-#define PY3
+//#define PY3
 
 #define MODULE_NAME "gvzpassage"
 #define MODULEINIT_PY3(NAME) PyInit_ ## NAME(void)
@@ -236,6 +236,20 @@ static PyObject *stdout_graph(PyObject *self, PyObject *args) {
     Py_RETURN_NONE;
 }
 
+static PyObject *wrap_nodeshape(PyObject *self, PyObject *args) {
+    PyObject* gra_ptr;
+    char* value;
+    Agraph_t* ag;
+    Agsym_t *sym;
+    if (!PyArg_ParseTuple(args, "Os", &gra_ptr, &value)) {
+        return NULL;
+    }
+    if (!(ag = retrieve_graph(gra_ptr)))
+        return NULL;
+    sym = agattr(ag, AGNODE, "shape", value);
+    Py_RETURN_NONE;
+}
+
 /* Methods registration */
 static PyMethodDef module_methods[] = {
     {"agraphNew", (PyCFunction)wrap_agraphnew, METH_VARARGS | METH_KEYWORDS, "Creates new Agraph"},
@@ -247,6 +261,7 @@ static PyMethodDef module_methods[] = {
     {"delete_node", delete_node, METH_VARARGS, "Delete node. Warning! Delete edges first"},
     {"delete_edge", delete_edge, METH_VARARGS, "Delete edge"},
     {"stdout_graph", stdout_graph, METH_VARARGS, "Writes graph text to stdout"},
+    {"set_shape_nodes", wrap_nodeshape, METH_VARARGS, "Sets a default shape for nodes"},
     {NULL, NULL, 0, NULL}
 };
 

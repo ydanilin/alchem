@@ -25,7 +25,7 @@ class centralFrame(QFrame):  # QWidget
         self.setFrameStyle(QFrame.Box | QFrame.Plain)
 
     def sizeHint(self):
-        return QSize(1000, 600)
+        return QSize(1300, 600)
 
     def paintEvent(self, event):
         print('centralFrame PaintEvent()', event.rect())
@@ -48,21 +48,25 @@ class hujFrame(QFrame):  # QWidget
         painter.drawRect(vport.adjusted(0, 0, -pen.width(), -pen.width()))
         # draw kvadratick in physical coordinates
         # painter.drawRect(0, 0, 100, 100)
-        painter.drawLine(vport.topLeft(), vport.bottomRight())
-        painter.drawLine(vport.bottomLeft(), vport.topRight())
-        print(painter.device().physicalDpiX())
-        print(painter.device().physicalDpiY())
-        print(painter.device().logicalDpiX())
-        print(painter.device().logicalDpiY())
-        # was 96.0/72.0
+        # painter.drawLine(vport.topLeft(), vport.bottomRight())
+        # painter.drawLine(vport.bottomLeft(), vport.topRight())
+        # print(painter.device().physicalDpiX())
+        # print(painter.device().physicalDpiY())
+        # print(painter.device().logicalDpiX())
+        # print(painter.device().logicalDpiY())
+        # was 96.0/72.0   1.4 is some kind of magic number
         scaleDpi = 101.0/72.0  # (true res for 344x193 mm, 1366x768) / 72
-        painter.drawRect(self.graph.boundingBox['LLx']*scaleDpi, self.graph.boundingBox['LLy']*scaleDpi,
-                         self.graph.boundingBox['URx']*scaleDpi, self.graph.boundingBox['URy']*scaleDpi)
-
-        scale = 65
+        LLx = self.graph.boundingBox['LLx']
+        LLy = self.graph.boundingBox['LLx']
+        URx = self.graph.boundingBox['URx']
+        URy = self.graph.boundingBox['URy']
+        painter.drawRect(LLx*scaleDpi, LLy*scaleDpi,
+                         URx*scaleDpi, URy*scaleDpi)
+        print('LLx {0}, LLy {1}, URx {2}, URy {3}'.format(LLx, LLy, URx, URy))
+        scale = 96  # maybe this is because GV uses 96 dpi and operates in inches
         for node in self.graph.nodesGeom:
-            x = node['centerX']
-            y = self.graph.boundingBox['URy'] - node['centerY']
+            x = node['centerX']*scaleDpi
+            y = (self.graph.boundingBox['URy'] - node['centerY'])*scaleDpi
             rx = (node['width']/2) * scale
             ry = (node['height']/2) * scale
             painter.drawEllipse(QPointF(x, y), rx, ry)
@@ -85,7 +89,7 @@ class hujFrame(QFrame):  # QWidget
         super(hujFrame, self).paintEvent(event)
 
     def sizeHint(self):
-        return QSize(700, 500)
+        return QSize(960, 540)
 
 
 class bdukFrame(QFrame):  # QWidget
