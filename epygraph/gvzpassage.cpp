@@ -10,7 +10,7 @@
 /* Extension procedure is slightly different for Py2 and Py3 so uncomment
    the following #define for Py3 */
 
-//#define PY3
+#define PY3
 
 #define MODULE_NAME "gvzpassage"
 #define MODULEINIT_PY3(NAME) PyInit_ ## NAME(void)
@@ -250,6 +250,20 @@ static PyObject *wrap_nodeshape(PyObject *self, PyObject *args) {
     Py_RETURN_NONE;
 }
 
+static PyObject *wrap_nodelabel(PyObject *self, PyObject *args) {
+    PyObject* node_ptr;
+    Agnode_t* node;
+    textlabel_t* label;
+    if (!PyArg_ParseTuple(args, "O", &node_ptr)) {
+        return NULL;
+    }
+    if (!(node = retrieve_node(node_ptr))) {
+        return NULL;
+    }
+    label = ND_label(node);
+    return Py_BuildValue("s", label->text);
+}
+
 /* Methods registration */
 static PyMethodDef module_methods[] = {
     {"agraphNew", (PyCFunction)wrap_agraphnew, METH_VARARGS | METH_KEYWORDS, "Creates new Agraph"},
@@ -262,6 +276,7 @@ static PyMethodDef module_methods[] = {
     {"delete_edge", delete_edge, METH_VARARGS, "Delete edge"},
     {"stdout_graph", stdout_graph, METH_VARARGS, "Writes graph text to stdout"},
     {"set_shape_nodes", wrap_nodeshape, METH_VARARGS, "Sets a default shape for nodes"},
+    {"node_label", wrap_nodelabel, METH_VARARGS, "Gets node label"},
     {NULL, NULL, 0, NULL}
 };
 

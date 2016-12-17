@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QProxyStyle, QFrame,
                              QWidget, QHBoxLayout)
-from PyQt5.QtCore import QSize, QRect, Qt, QPointF
+from PyQt5.QtCore import QSize, QRect, Qt, QPointF, QRectF
 from PyQt5.QtGui import QPainter
 from epygraph import AGraph
 
@@ -64,12 +64,36 @@ class hujFrame(QFrame):  # QWidget
                          URx*scaleDpi, URy*scaleDpi)
         print('LLx {0}, LLy {1}, URx {2}, URy {3}'.format(LLx, LLy, URx, URy))
         scale = 96  # maybe this is because GV uses 96 dpi and operates in inches
-        for node in self.graph.nodesGeom:
-            x = node['centerX']*scaleDpi
-            y = (self.graph.boundingBox['URy'] - node['centerY'])*scaleDpi
-            rx = (node['width']/2) * scale
-            ry = (node['height']/2) * scale
+        for node in self.graph.nodesPtr:
+            ng = self.graph.nodeGeometry(node)
+            x = ng['centerX']*scaleDpi
+            y = (self.graph.boundingBox['URy'] - ng['centerY'])*scaleDpi
+            rx = (ng['width']/2) * scale
+            ry = (ng['height']/2) * scale
             painter.drawEllipse(QPointF(x, y), rx, ry)
+
+            font = painter.font()
+            font.setPixelSize(14)
+            painter.setFont(font)
+            tbox = QRectF(QPointF(x - rx, y - ry), QPointF(x + rx, y + ry))
+            label = self.graph.nodeLabel(node)
+            boundingRect = painter.drawText(tbox, Qt.AlignCenter, self.tr(label))
+
+        for edge in self.graph.edgesGeom:
+            spl = edge[0]
+            if not spl['sflag']:
+                start = spl['points'][0]
+            else:
+                start = spl['sarrowtip']
+            if not spl['eflag']:
+                end = spl['points'][-1]
+            else:
+                end = spl['earrowtip']
+            x1 = start['x'] * scaleDpi
+            y1 = (self.graph.boundingBox['URy'] - start['y']) * scaleDpi
+            x2 = end['x'] * scaleDpi
+            y2 = (self.graph.boundingBox['URy'] - end['y']) * scaleDpi
+            painter.drawLine(x1, y1, x2, y2)
 
         # font = painter.font()
         # font.setPixelSize(56)
@@ -89,7 +113,7 @@ class hujFrame(QFrame):  # QWidget
         super(hujFrame, self).paintEvent(event)
 
     def sizeHint(self):
-        return QSize(960, 540)
+        return QSize(660, 540)
 
 
 class bdukFrame(QFrame):  # QWidget
