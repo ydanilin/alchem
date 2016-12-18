@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QProxyStyle, QFrame,
                              QWidget, QHBoxLayout, QGraphicsScene,
                              QGraphicsView, QSizePolicy, QGraphicsEllipseItem,
-                             )
+                             QGraphicsTextItem, QMenu)
 from PyQt5.QtCore import QSize, QRect, Qt, QPointF, QRectF
 from PyQt5.QtGui import QPainter, QPen, QColor
 from epygraph import AGraph
@@ -17,9 +17,9 @@ class MainWindow(QMainWindow):
         self.hujLayout = QHBoxLayout()
         sc = QGraphicsScene()
         self.drawScene(sc)
-        huj = hujFrame(sc)
+        self.huj = hujFrame(sc)
         bduk = bdukFrame()
-        self.hujLayout.addWidget(huj)
+        self.hujLayout.addWidget(self.huj)
         self.hujLayout.addWidget(bduk)
         self.cf.setLayout(self.hujLayout)
         self.setCentralWidget(self.cf)
@@ -40,18 +40,16 @@ class MainWindow(QMainWindow):
             rx = (ng['width'] / 2) * scale
             ry = (ng['height'] / 2) * scale
             el = NodeShape(x-rx, y-ry, 2*rx, 2*ry)
-            # el.setAcceptHoverEvents(True)
+            label = self.graph.nodeLabel(node)
+            lbl = QGraphicsTextItem(self.tr(label), el)
+            # TODO: text positioniong
+            lbl.setAcceptHoverEvents(False)
+            # TODO: try to make child.event()
+            lbl.setPos(x, y)
             scene.addItem(el)
 
-        #     font = painter.font()
-        #     font.setPixelSize(14)
-        #     painter.setFont(font)
-        #     tbox = QRectF(QPointF(x - rx, y - ry), QPointF(x + rx, y + ry))
-        #     label = self.graph.nodeLabel(node)
-        #     boundingRect = painter.drawText(tbox, Qt.AlignCenter,
-        #                                     self.tr(label))
-        #
         for edge in self.graph.edgesGeom:
+            # TODO: edges hover
             spl = edge[0]
             if not spl['sflag']:
                 start = spl['points'][0]
@@ -102,15 +100,34 @@ class NodeShape(QGraphicsEllipseItem):
         super(NodeShape, self).__init__(x, y, width, height)
         self.setAcceptHoverEvents(True)
         self.oldpen = None
+        self.oldTextColor = None
 
     def hoverEnterEvent(self, event):
-        self.oldpen = QPen(self.pen())
-        self.setPen(QPen(QColor('red')))
+        color = QColor('red')
+        self.oldpen = self.pen()
+        self.setPen(QPen(color))
+        for child in self.childItems():
+            # I know this is shitty solution, we will crash if children are
+            # not of text type...
+            self.oldTextColor = child.defaultTextColor()
+            child.setDefaultTextColor(color)
 
     def hoverLeaveEvent(self, event):
         if self.oldpen:
             self.setPen(self.oldpen)
+        if self.oldTextColor:
+            for child in self.childItems():
+                child.setDefaultTextColor(self.oldTextColor)
 
+    def contextMenuEvent(self, event):
+        # http://www.qtcentre.org/threads/5187-Popup-menu-for-a-QGraphicsItem
+        # if use asynchronous call, ALWAYS pass a parent - event.widget()
+        # to menu constructor, otherwise the menu will be destroyed immediately
+        # as having zero reference
+        menu = QMenu('Node', event.widget())
+        menu.addAction(event.widget().tr('Add child node here'))
+        menu.addAction(event.widget().tr('Delete subtree'))
+        menu.popup(event.screenPos())
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
