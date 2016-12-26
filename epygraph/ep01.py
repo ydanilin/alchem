@@ -5,7 +5,7 @@ import epygraph.gvzpassage as gps
 
 class AGraph:
     def __init__(self, directed=True):
-        self.graphPtr = gps.agraphNew('DjHuj', directed)
+        self.graphPtr, self.graphContext = gps.agraphNew('DjHuj', directed)
         gps.set_shape_nodes(self.graphPtr, 'circle')
         self.nodesPtr = []
         self.nodesPtr.append(gps.addNode(self.graphPtr, "1"))  # 0
@@ -19,7 +19,7 @@ class AGraph:
         self.edge3Ptr = gps.addEdge(self.graphPtr, self.nodesPtr[0], self.nodesPtr[3])
         self.edge4Ptr = gps.addEdge(self.graphPtr, self.nodesPtr[3], self.nodesPtr[4])
         self.edge5Ptr = gps.addEdge(self.graphPtr, self.nodesPtr[3], self.nodesPtr[5])
-        self.boundingBox = gps.layout(self.graphPtr)
+        self.boundingBox = gps.layout(self.graphPtr, self.graphContext)
         # print('Graph before delete node HUJ_4:')
         # gps.stdout_graph(self.graphPtr)
         # gps.delete_edge(self.graphPtr, edge3)
@@ -44,9 +44,14 @@ class AGraph:
     def nodeGeometry(self, nodePtr):
         return gps.node_geometry(nodePtr)
 
+    def closeGraph(self):
+        if self.graphPtr:
+            gps.agraphClose(self.graphPtr)
+
 if __name__ == '__main__':
     a = AGraph()
     print(a.nodesGeom)
     pp = pprint.PrettyPrinter()
     # pp.pprint(a.edgesGeom)
     print(gps.node_label(a.nodesPtr[-1]))
+    a.closeGraph()

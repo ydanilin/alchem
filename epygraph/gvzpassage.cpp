@@ -10,7 +10,7 @@
 /* Extension procedure is slightly different for Py2 and Py3 so uncomment
    the following #define for Py3 */
 
-#define PY3
+//#define PY3
 
 #define MODULE_NAME "gvzpassage"
 #define MODULEINIT_PY3(NAME) PyInit_ ## NAME(void)
@@ -29,6 +29,10 @@ static Agedge_t *retrieve_edge(PyObject *obj) {
     return (Agedge_t *) PyCapsule_GetPointer(obj, "Agedge");
 }
 
+static GVC_t *retrieve_GVC(PyObject *obj) {
+    return (GVC_t *) PyCapsule_GetPointer(obj, "GVC");
+}
+
 /* core procedures here */
 static PyObject *wrap_agraphnew(PyObject *self, PyObject *args, PyObject *kwargs) {
     Agraph_t *ag;
@@ -36,6 +40,9 @@ static PyObject *wrap_agraphnew(PyObject *self, PyObject *args, PyObject *kwargs
     static char* kwlist[] = {"name", "directed", NULL};
     int directed = 0;
     Agdesc_t gtype;
+    PyObject* out_gra;
+    GVC_t* gvc;
+    PyObject* out_gvc;
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|b", kwlist, &name, &directed))
         return NULL;
     gtype = Agstrictdirected;
@@ -51,7 +58,11 @@ static PyObject *wrap_agraphnew(PyObject *self, PyObject *args, PyObject *kwargs
 //    double dpi = drw->dpi;
 //    printf("During creation dpi is %f\n", dpi);
     // hack ends
-    return PyCapsule_New(ag, "Agraph", NULL);
+    out_gra = PyCapsule_New(ag, "Agraph", NULL);
+    gvc = gvContext();
+    out_gvc = PyCapsule_New(gvc, "GVC", NULL);
+    return Py_BuildValue("(OO)", out_gra, out_gvc);
+//    return out_gra;
 }
 
 static PyObject *wrap_addNode(PyObject *self, PyObject *args) {
@@ -93,13 +104,17 @@ static PyObject *wrap_addEdge(PyObject *self, PyObject *args, PyObject *kwargs) 
 
 static PyObject *wrap_layout(PyObject *self, PyObject *args) {
     PyObject* gra_ptr;
+    PyObject* gvc_ptr;
     Agraph_t* ag;
     GVC_t *gvc;
-    if (!PyArg_ParseTuple(args, "O", &gra_ptr))
+    if (!PyArg_ParseTuple(args, "OO", &gra_ptr, &gvc_ptr))
         return NULL;
     if (!(ag = retrieve_graph(gra_ptr)))
         return NULL;
-    gvc = gvContext();
+    if (!(gvc = retrieve_GVC(gvc_ptr)))
+        return NULL;
+//    gvc = gvContext();
+    gvFreeLayout(gvc, ag);
     gvLayout(gvc, ag, "dot");
     boxf bbox = GD_bb(ag);
     double LLx = bbox.LL.x;
@@ -264,6 +279,18 @@ static PyObject *wrap_nodelabel(PyObject *self, PyObject *args) {
     return Py_BuildValue("s", label->text);
 }
 
+static PyObject *wrap_agclose(PyObject *self, PyObject *args) {
+    PyObject* gra_ptr;
+    Agraph_t* ag;
+    if (!PyArg_ParseTuple(args, "O", &gra_ptr)) {
+        return NULL;
+    }
+    if (!(ag = retrieve_graph(gra_ptr)))
+        return NULL;
+    agclose(ag);
+    Py_RETURN_NONE;
+}
+
 /* Methods registration */
 static PyMethodDef module_methods[] = {
     {"agraphNew", (PyCFunction)wrap_agraphnew, METH_VARARGS | METH_KEYWORDS, "Creates new Agraph"},
@@ -277,6 +304,7 @@ static PyMethodDef module_methods[] = {
     {"stdout_graph", stdout_graph, METH_VARARGS, "Writes graph text to stdout"},
     {"set_shape_nodes", wrap_nodeshape, METH_VARARGS, "Sets a default shape for nodes"},
     {"node_label", wrap_nodelabel, METH_VARARGS, "Gets node label"},
+    {"agraphClose", wrap_agclose, METH_VARARGS, "Closes the graph"},
     {NULL, NULL, 0, NULL}
 };
 
